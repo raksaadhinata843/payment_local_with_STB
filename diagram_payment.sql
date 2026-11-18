@@ -53,14 +53,14 @@ CREATE TABLE "cards" (
 
 CREATE TABLE "wallets" (
   "id" uuid PRIMARY KEY,
-  "user_id" uuid UNIQUE,
+  "user_id" uuid UNIQUE NOT NULL,
   "balance" bigint,
   "updated_at" timestamp
 );
 
 CREATE TABLE "biometrics" (
   "id" uuid PRIMARY KEY,
-  "user_id" uuid,
+  "user_id" uuid NOT NULL,
   "fingerprint_template" blob,
   "fallback_pin" varchar
 );
@@ -68,9 +68,9 @@ CREATE TABLE "biometrics" (
 CREATE TABLE "transactions" (
   "id" uuid PRIMARY KEY,
   "idempotency_key" varchar UNIQUE,
-  "user_id" uuid,
-  "device_id" varchar,
-  "admin_id" uuid,
+  "user_id" uuid NOT NULL,
+  "device_id" varchar NOT NULL,
+  "admin_id" uuid NOT NULL,
   "amount" bigint,
   "balance_before" bigint,
   "balance_after" bigint,
@@ -80,6 +80,8 @@ CREATE TABLE "transactions" (
 );
 
 CREATE INDEX ON "cards" ("rfid_uid");
+
+CREATE INDEX ON "transactions" ("idempotency_key");
 
 ALTER TABLE "cards" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
