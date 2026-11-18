@@ -122,39 +122,55 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 
 ## 5. Skema Basis Data Terpusat (Data Models)
 
-### Tabel `customers`
+### Tabel 'admins'
 * `id` (UUID, Primary Key)
-* `full_name` (VARCHAR)
+* `username` (VARCHAR, Unique)
+* `role` (ENUM: SUPERADMIN, OPERATOR)
+* `password` (VARCHAR)
+* `is_active` (BOOLEAN)
+
+### Tabel 'devices'
+* `id` (VARCHAR, Primary Key)
+* `location_name` (VARCHAR)
+* `ip_address` (VARCHAR)
+* `last_seen_at` (TIMESTAMP)
+
+### Tabel `users`
+* `id` (UUID, Primary Key)
+* `username` (VARCHAR)
 * `photo_url` (VARCHAR) - Jalur file foto profil untuk tampilan monitor.
-* `status` (ENUM: ACTIVE, SUSPENDED)
+* `status` (ENUM: ACTIVE, BLOCKED, DELETED)
 * `created_at` (TIMESTAMP)
 
 ### Tabel `cards`
 * `id` (UUID, Primary Key)
-* `customer_id` (UUID, Foreign Key -> `customers.id`)
+* `user_id` (UUID, Foreign Key -> `customers.id`)
 * `rfid_uid` (VARCHAR, Unique, Indexed) - UID unik dari kartu/wristband.
 * `is_active` (BOOLEAN)
 
-### Tabel `biometrics`
-* `id` (UUID, Primary Key)
-* `customer_id` (UUID, Foreign Key -> `customers.id`)
-* `fingerprint_template` (BLOB/TEXT) - Template hash sidik jari.
-* `fallback_pin_hash` (VARCHAR) - Hash PIN cadangan.
-
 ### Tabel `wallets`
 * `id` (UUID, Primary Key)
-* `customer_id` (UUID, Foreign Key -> `customers.id`, Unique)
+* `user_id` (UUID, Foreign Key -> `customers.id`, Unique)
 * `balance` (BIGINT) - Saldo disimpan dalam satuan terkecil (integer / tanpa desimal).
 * `updated_at` (TIMESTAMP)
+
+### Tabel `biometrics`
+* `id` (UUID, Primary Key)
+* `user_id` (UUID, Foreign Key -> `customers.id`)
+* `fingerprint_template` (BLOB/TEXT) - Template hash sidik jari.
+* `fallback_pin` (VARCHAR) - Hash PIN cadangan.
 
 ### Tabel `transactions`
 * `id` (UUID, Primary Key)
 * `idempotency_key` (VARCHAR, Unique, Indexed) - UUID unik transaksi dari kasir.
-* `device_id` (VARCHAR) - Identitas STB Kasir pengirim.
-* `customer_id` (UUID, Foreign Key -> `customers.id`)
+* `device_id` (VARCHAR, Foreign Key -> `devices.id`) - Identitas STB Kasir pengirim.
+* `user_id` (UUID, Foreign Key -> `customers.id`)
+* `admin_id` (UUID, Foreign Key -> `admins.id`)
 * `amount` (BIGINT) - Nominal transaksi.
-* `type` (ENUM: DEBIT, TOPUP, REFUND)
-* `status` (ENUM: SUCCESS, PENDING_SYNC, REJECTED)
+* `balance_before` (BIGINT)
+* `balance_after` (BIGINT)
+* `type` (ENUM: REFUND, TOP UP, PAYMENT)
+* `status` (ENUM: PENDING, SUCCESS, FAILED)
 * `created_at` (TIMESTAMP)
 
 ---
@@ -170,8 +186,8 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 {
   "status": "success",
   "data": {
-    "customer_id": "c7b8a910-1234-5678-9abc-def012345678",
-    "full_name": "Budi Santoso",
+    "user_id": "c7b8a910-1234-5678-9abc-def012345678",
+    "username": "Budi Santoso",
     "photo_url": "/static/photos/c7b8a910.jpg",
     "balance": 75000,
     "card_status": "ACTIVE"
@@ -198,8 +214,8 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
   "status": "SUCCESS",
   "transaction_id": "tx-88391029",
   "idempotency_key": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-  "previous_balance": 75000,
-  "current_balance": 55000,
+  "balance_before": 75000,
+  "balance_after": 55000,
   "message": "Pembayaran berhasil diproses."
 }
 ```
@@ -223,10 +239,3 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
   * Monitor Layar (HDMI / VGA Converter).
 
 ---
-
-## 8. Langkah Pengembangan Selanjutnya (Roadmap)
-
-1. [ ] **Setup Infrastructure**: Install Armbian di STB Admin & STB Kasir, kustomisasi jaringan lokal dengan IP Statis / mDNS (`stb-admin.local`).
-2. [ ] **Development Backend**: Implementasi FastAPI REST Engine & Database Migration Script di STB Admin.
-3. [ ] **Development Terminal POS App**: Membuat skrip GUI/Web Kiosk di STB Kasir untuk membaca USB RFID & USB Fingerprint secara simultan.
-4. [ ] **Testing Mode Kedua**: Pengujian pemutusan koneksi LAN untuk memastikan fungsi pencatatan SQLite lokal & auto-sync berjalan tanpa duplikasi data.
