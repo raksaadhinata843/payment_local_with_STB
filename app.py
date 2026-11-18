@@ -14,3 +14,11 @@ if rfid_input:
         show_informmation(user)
     else:
         print('Unknown user')
+
+    nominal_transaction = int(input(' '))
+
+    if saldo < nominal_transaction:
+        reject_transaction
+        print('Please top up ur wallet')
+    else:
+        update_saldo = requests.post('saldo')
