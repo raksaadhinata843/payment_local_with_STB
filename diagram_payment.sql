@@ -47,9 +47,8 @@ CREATE TABLE "users" (
 CREATE TABLE "cards" (
   "id" uuid PRIMARY KEY,
   "user_id" uuid NOT NULL,
-  "body" text,
-  "status" varchar UNIQUE,
-  "created_at" timestamp
+  "rfid_uid" varchar UNIQUE,
+  "is_active" boolean
 );
 
 CREATE TABLE "wallets" (
@@ -80,9 +79,7 @@ CREATE TABLE "transactions" (
   "created_at" timestamp
 );
 
-CREATE UNIQUE INDEX ON "cards" ("status");
-
-COMMENT ON COLUMN "cards"."body" IS 'Content of the post';
+CREATE INDEX ON "cards" ("rfid_uid");
 
 ALTER TABLE "cards" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
