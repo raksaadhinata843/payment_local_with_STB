@@ -144,19 +144,19 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 
 ### Tabel `cards`
 * `id` (UUID, Primary Key)
-* `user_id` (UUID, Foreign Key -> `customers.id`)
+* `user_id` (UUID, Foreign Key -> `users.id`)
 * `rfid_uid` (VARCHAR, Unique, Indexed) - UID unik dari kartu/wristband.
 * `is_active` (BOOLEAN)
 
 ### Tabel `wallets`
 * `id` (UUID, Primary Key)
-* `user_id` (UUID, Foreign Key -> `customers.id`, Unique)
+* `user_id` (UUID, Foreign Key -> `users.id`, Unique)
 * `balance` (BIGINT) - Saldo disimpan dalam satuan terkecil (integer / tanpa desimal).
 * `updated_at` (TIMESTAMP)
 
 ### Tabel `biometrics`
 * `id` (UUID, Primary Key)
-* `user_id` (UUID, Foreign Key -> `customers.id`)
+* `user_id` (UUID, Foreign Key -> `users.id`)
 * `fingerprint_template` (BLOB/TEXT) - Template hash sidik jari.
 * `fallback_pin` (VARCHAR) - Hash PIN cadangan.
 
@@ -164,7 +164,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 * `id` (UUID, Primary Key)
 * `idempotency_key` (VARCHAR, Unique, Indexed) - UUID unik transaksi dari kasir.
 * `device_id` (VARCHAR, Foreign Key -> `devices.id`) - Identitas STB Kasir pengirim.
-* `user_id` (UUID, Foreign Key -> `customers.id`)
+* `user_id` (UUID, Foreign Key -> `users.id`)
 * `admin_id` (UUID, Foreign Key -> `admins.id`)
 * `amount` (BIGINT) - Nominal transaksi.
 * `balance_before` (BIGINT)
