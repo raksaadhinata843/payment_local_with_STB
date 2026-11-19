@@ -82,7 +82,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 
 ### Tahap 1: Pembacaan RFID & Kueri Data Pelanggan
 1. Pelanggan menempelkan kartu RFID/wristband pada reader di STB Kasir.
-2. STB Kasir membaca UID kartu secara otomatis (tanpa input manual ID oleh kasir).
+2. STB Kasir membaca UID kartu secara otomatis.
 3. STB Kasir mengirim permintaan kueri `GET /api/v1/device/customer-by-card?uid={UID}` ke STB Admin.
 4. Layar monitor kasir menampilkan **Nama Pelanggan**, **Sisa Saldo**, dan **Foto Profil Pelanggan**. Kasir melakukan pencocokan visual antara fisik pembeli dan foto profil di layar.
 
