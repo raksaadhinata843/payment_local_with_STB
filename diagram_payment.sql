@@ -21,6 +21,11 @@ CREATE TYPE "status_transactions" AS ENUM (
   'failed'
 );
 
+CREATE TYPE "auth_transactions" AS ENUM (
+  'fingerprint',
+  'pin_fallback'
+);
+
 CREATE TABLE "admins" (
   "id" uuid PRIMARY KEY,
   "username" varchar UNIQUE,
@@ -76,7 +81,8 @@ CREATE TABLE "transactions" (
   "balance_after" bigint,
   "type" type_transactions NOT NULL DEFAULT 'payment',
   "status" status_transactions NOT NULL DEFAULT 'pending',
-  "created_at" timestamp
+  "created_at" timestamp,
+  "auth_method" auth_transactions NOT NULL DEFAULT 'fingerprint'
 );
 
 CREATE INDEX ON "cards" ("rfid_uid");
