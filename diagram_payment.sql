@@ -21,29 +21,29 @@ CREATE TYPE "status_transactions" AS ENUM (
   'failed'
 );
 
-CREATE TYPE "auth_transactions" AS ENUM (
+CREATE TYPE "auth_transaction" AS ENUM (
   'fingerprint',
-  'pin_fallback'
+  'fallback_pin'
 );
 
 CREATE TABLE "admins" (
   "id" uuid PRIMARY KEY,
-  "username" varchar UNIQUE,
+  "username" varchar(50),
   "role" role_admins NOT NULL DEFAULT 'operator',
-  "password" varchar,
+  "password" varchar(255),
   "is_active" boolean
 );
 
 CREATE TABLE "device" (
-  "id" varchar PRIMARY KEY,
-  "location_name" varchar,
-  "ip_address" varchar,
+  "id" varchar(17) PRIMARY KEY,
+  "location_name" varchar(21),
+  "ip_address" varchar(17),
   "last_seen_at" timestamp
 );
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY,
-  "username" varchar,
+  "username" varchar(50),
   "photo_url" varchar,
   "status" users_status NOT NULL DEFAULT 'active',
   "created_at" timestamp
@@ -74,7 +74,7 @@ CREATE TABLE "transactions" (
   "id" uuid PRIMARY KEY,
   "idempotency_key" varchar UNIQUE,
   "user_id" uuid NOT NULL,
-  "device_id" varchar NOT NULL,
+  "device_id" varchar(17) NOT NULL,
   "admin_id" uuid NOT NULL,
   "amount" bigint,
   "balance_before" bigint,
