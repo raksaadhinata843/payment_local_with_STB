@@ -87,10 +87,14 @@ class Cards(Base):
         primary_key=True,
         default=uuid.uuid4
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        default=uuid.uuid4
+    )
     rfid_uid: Mapped[str] = mapped_column(
         String(),
-        unique=True
+        unique=True,
+        index=True
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,
@@ -105,6 +109,7 @@ class Wallets(Base):
         default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
         unique=True,
         default=uuid.uuid4
     )
@@ -121,7 +126,10 @@ class Biometrics(Base):
         primary_key=True,
         default=uuid.uuid4
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)    
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        default=uuid.uuid4
+    )
     fingerprint_template: Mapped[bytes] = mapped_column(LargeBinary)
     fallback_pin: Mapped[str] = mapped_column(String())
 
@@ -133,12 +141,22 @@ class Transactions(Base):
         default=uuid.uuid4
     )
     idempotency_key: Mapped[str] = mapped_column(
+        String(),
         unique=True,
-        String()
+        index=True
     )
-    user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)
-    device_id: Mapped[str] = mapped_column(String(17))
-    admin_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        default=uuid.uuid4
+    )
+    device_id: Mapped[str] = mapped_column(
+        ForeignKey("device.id", ondelete="CASCADE"),
+        String(17)
+    )
+    admin_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("admins.id", ondelete="CASCADE"),
+        default=uuid.uuid4
+    )
     amount: Mapped[int] = mapped_column(BigInteger)
     balance_before: Mapped[int] = mapped_column(BigInteger)
     balance_after: Mapped[int] = mapped_column(BigInteger)
@@ -158,4 +176,3 @@ class Transactions(Base):
         Enum(AuthTransaction),
         default=AuthTransaction.FINGERPRINT
     )
-    
