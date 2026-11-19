@@ -83,7 +83,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 ### Tahap 1: Pembacaan RFID & Kueri Data Pelanggan
 1. Pelanggan menempelkan kartu RFID/wristband pada reader di STB Kasir.
 2. STB Kasir membaca UID kartu secara otomatis.
-3. STB Kasir mengirim permintaan kueri `GET /api/v1/device/customer-by-card?uid={UID}` ke STB Admin.
+3. STB Kasir mengirim permintaan kueri `GET /api/v1/device/user-by-card?uid={UID}` ke STB Admin.
 4. Layar monitor kasir menampilkan **Nama Pelanggan**, **Sisa Saldo**, dan **Foto Profil Pelanggan**. Kasir melakukan pencocokan visual antara fisik pembeli dan foto profil di layar.
 
 ### Tahap 2: Input Nominal & Validasi Saldo Awal
@@ -97,7 +97,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 3. **Mekanisme Fallback (Jari Kotor/Rusak)**: Jika autentikasi sidik jari gagal berulang kali, kasir dapat memilih opsi *"Gunakan PIN Temporer"*. Kasir meminta kode persetujuan/PIN temporer dari Admin untuk memvalidasi transaksi secara manual.
 
 ### Tahap 4: Eksekusi Transaksi Debit
-1. Setelah autentikasi berhasil (Sidik Jari VALID / PIN Approval VALID), STB Kasir membentuk *payload* transaksi yang berisi: `card_uid`, `amount`, `device_id`, `idempotency_key`, dan `timestamp`.
+1. Setelah autentikasi berhasil (Sidik Jari VALID / PIN Approval VALID), STB Kasir membentuk *payload* transaksi yang berisi: `rfid_uid`, `amount`, `device_id`, `idempotency_key`, dan `timestamp`.
 2. Jika jaringan **Online**, *payload* dikirim ke STB Admin (`POST /api/v1/device/charge`). STB Admin memproses pemotongan saldo secara *atomic* pada database ledger terpusat.
 3. Jika jaringan **Offline (Mode Kedua)**, transaksi dicatat secara lokal di database SQLite STB Kasir dan ditandai sebagai *Pending Synchronization*.
 
@@ -124,7 +124,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 
 ### Tabel 'admins'
 * `id` (UUID, Primary Key)
-* `username` (VARCHAR, Unique)
+* `username` (VARCHAR)
 * `role` (ENUM: SUPERADMIN, OPERATOR)
 * `password` (VARCHAR)
 * `is_active` (BOOLEAN)
@@ -178,7 +178,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
 ## 6. Spesifikasi API Utama (Device REST API)
 
 ### 1. Kueri Pelanggan via RFID
-* **Endpoint**: `GET /api/v1/device/customer-by-card`
+* **Endpoint**: `GET /api/v1/device/user-by-card`
 * **Headers**: `X-Device-ID`, `X-Device-HMAC`
 * **Query Params**: `uid=4B2A8F90`
 * **Response (200 OK)**:

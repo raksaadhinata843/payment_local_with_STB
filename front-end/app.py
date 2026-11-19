@@ -18,7 +18,7 @@ if rfid_input:
         show_information(user)
 
         nominal_transaction = int(input(' '))
-        saldo = user{wallets['balance']}
+        saldo = user(wallets['balance'])
         
         if saldo < nominal_transaction:
             print('Please top up ur wallet')
