@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 import enum
-from sqlalchemy import TIMESTAMP, Enum, String, BigInteger, LargeBinary, func, Boolean
+from sqlalchemy import TIMESTAMP, Enum, String, BigInteger, LargeBinary, func, Boolean, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class StatusUsers(enum.Enum):
@@ -49,7 +49,7 @@ class Admins(Base):
     )
 
 class Devices(Base):
-    __tablename__ = "device"
+    __tablename__ = "devices"
 
     id: Mapped[str] = mapped_column(
         String(17),
@@ -116,7 +116,8 @@ class Wallets(Base):
     balance: Mapped[int] = mapped_column(BigInteger)
     updated_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
-        server_default=func.now()
+        server_default=func.now(),
+        onupdate=func.now()
     )
 
 class Biometrics(Base):
@@ -150,8 +151,8 @@ class Transactions(Base):
         default=uuid.uuid4
     )
     device_id: Mapped[str] = mapped_column(
-        ForeignKey("device.id", ondelete="CASCADE"),
-        String(17)
+        String(17),
+        ForeignKey("device.id", ondelete="CASCADE")
     )
     admin_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("admins.id", ondelete="CASCADE"),

@@ -34,7 +34,7 @@ CREATE TABLE "admins" (
   "is_active" boolean
 );
 
-CREATE TABLE "device" (
+CREATE TABLE "devices" (
   "id" varchar(17) PRIMARY KEY,
   "location_name" varchar(21),
   "ip_address" varchar(17),
