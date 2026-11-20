@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-import datetime
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
 
 class CustomerData(BaseModel):
     user_id: int
@@ -10,7 +10,7 @@ class CustomerData(BaseModel):
 
 class CustomerResponse(BaseModel):
     status: str
-    data: List[CustomerData]
+    data: CustomerData
     
     model_config = ConfigDict(from_attributes=True)
 
