@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from models import Cards, Users, Wallets
+from models import Cards, Users, Wallets, Transactions
 
 def get_user_by_card(db: Session, rfid_input: str):
 
@@ -18,3 +18,24 @@ def get_user_by_card(db: Session, rfid_input: str):
 
     if not card:
         return None
+    
+    return card
+
+def process_payment_transaction(db: Session, idempotency_key: str):
+
+    stmt = (
+        select(Transactions)
+        .where(Transactions.idempotency_key == idempotency_key)
+    )
+
+    idempotency_key = db.execute(stmt).first()
+
+    if idempotency_key:
+        return {
+            "status": "SUCCESS",
+            "transaction_id": str(new_transaction.id),
+            "idempotency_key": payload.idempotency_key,
+            "balance_before": balance_before,
+            "balance_after": balance_after,
+            "message": "Terimakasih telah belanja di sini!!!..."
+        }
