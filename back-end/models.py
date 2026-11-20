@@ -152,7 +152,7 @@ class Transactions(Base):
     )
     device_id: Mapped[str] = mapped_column(
         String(17),
-        ForeignKey("device.id", ondelete="CASCADE")
+        ForeignKey("devices.id", ondelete="CASCADE")
     )
     admin_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("admins.id", ondelete="CASCADE"),
