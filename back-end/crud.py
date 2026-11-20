@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, contains_eager
 from models import Cards, Users, Wallets
 
 def get_user_by_card(db: Session, rfid_input: str):
