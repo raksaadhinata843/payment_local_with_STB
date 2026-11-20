@@ -1,22 +1,20 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from models import Cards, Users, wallets
+from models import Cards, Users, Wallets
 
 def get_user_by_card(db: Session, rfid_input: str):
 
-    users_fk = [col for col in users.__table__.columns if col.foreign_keys]
-    wallets_fk = [col for col in wallets.__table__.columns if col.foreign_keys]
     stmt = (
-        select(cards, *users_fk, *wallets_fk)
-        .join(cards.users)
-        .join(users.wallets)
+        select(Cards, Users, Wallets)
+        .join(Cards.Users)
+        .join(Users.Wallets)
         .options(
-            contains_eager(cards.users)
-            .contains_eager(users.wallets)
+            contains_eager(Cards.Users)
+            .contains_eager(Users.Wallets)
         )
         .where(
-            cards.rfid_uid == rfid_input,
-            cards.is_active == True
+            Cards.rfid_uid == rfid_input,
+            Cards.is_active == True
         )
     )
 
