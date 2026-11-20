@@ -190,7 +190,7 @@ Sistem terbagi menjadi dua peran utama perangkat berbasis STB:
     "username": "Budi Santoso",
     "photo_url": "/static/photos/c7b8a910.jpg",
     "balance": 75000,
-    "card_status": "ACTIVE"
+    "status": "ACTIVE"
   }
 }
 ```
