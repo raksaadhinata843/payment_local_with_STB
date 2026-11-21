@@ -28,14 +28,34 @@ def process_payment_transaction(db: Session, idempotency_key: str):
         .where(Transactions.idempotency_key == idempotency_key)
     )
 
-    idempotency_key = db.execute(stmt).first()
+    has_own_key = db.execute(stmt).first()
 
-    if idempotency_key:
+    if not has_own_key:
+
+        new_transaction = Transactions(
+            idempotency_key=idempotency_key,
+            balance_before=balance_before,
+            balance_after=balance_after
+        )
+        
+        db.add(new_transaction)
+        db.commit()
+        db.refresh(new_transaction)
+
         return {
             "status": "SUCCESS",
             "transaction_id": str(new_transaction.id),
-            "idempotency_key": payload.idempotency_key,
+            "idempotency_key": idempotency_key,
             "balance_before": balance_before,
             "balance_after": balance_after,
             "message": "Terimakasih telah belanja di sini!!!..."
         }
+    
+    return {
+        "status": "SUCCESS",
+        "transaction_id": str(has_own_key.id),
+        "idempotency_key": has_own_key.idempotency_key,
+        "balance_before": has_own_key.balance_before,
+        "balance_after": has_own_key.balance_after,
+        "message": "Terimakasih telah belanja di sini!!!..."
+    }
